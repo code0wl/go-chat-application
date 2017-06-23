@@ -8,10 +8,6 @@ import (
     "os"
 )
 
-func main() {
-
-}
-
 // Channel takes an ip and port
 // runs channel connection for a channel
 func Channel(ip string, port string) {
@@ -28,12 +24,43 @@ func Channel(ip string, port string) {
     }
     fmt.Println("Channel has a new active user")
 
-    reader := bufio.NewReader(conn)
-    message, err := reader.ReadString('\n')
-    if err != nil {
-        log.Fatal("Oops: ", err)
+    for {
+        startChannelEngine(conn)
     }
-    fmt.Println("Message send: ", message)
+}
+
+func startChannelEngine(conn net.Conn) {
+    reader := bufio.NewReader(conn)
+    message, readErr := reader.ReadString('\n')
+    if readErr != nil {
+        log.Fatal("Error: ", readErr)
+    }
+    fmt.Println("Message received: ", message)
+
+    fmt.Print("Message: ")
+    replyReader := bufio.NewReader(os.Stdin)
+    replyMessage, replyErr := replyReader.ReadString('\n')
+    if replyErr != nil {
+        log.Fatal("Error: ", replyErr)
+    }
+    fmt.Fprint(conn, replyMessage)
+}
+
+func startSubscriberEngine(conn net.Conn) {
+    fmt.Print("Send message: ")
+    reader := bufio.NewReader(os.Stdin)
+    message, readErr := reader.ReadString('\n')
+    if readErr != nil {
+        log.Fatal("Error: ", readErr)
+    }
+    fmt.Fprint(conn, message)
+
+    replyReader := bufio.NewReader(conn)
+    replyMessage, replyErr := replyReader.ReadString('\n')
+    if replyErr != nil {
+        log.Fatal("Error: ", replyErr)
+    }
+    fmt.Println("Message received:", replyMessage)
 }
 
 // Subscriber takes an ip and port
@@ -44,12 +71,7 @@ func Subscriber(ip string, port string) {
     if err != nil {
         log.Fatal("Oops: ", err)
     }
-    fmt.Print("Message :")
-
-    reader := bufio.NewReader(os.Stdin)
-    message, err := reader.ReadString('\n')
-    if err != nil {
-        log.Fatal("Oops: ", err)
+    for {
+        startSubscriberEngine(conn)
     }
-    fmt.Fprint(conn, message)
 }

@@ -12,11 +12,11 @@ const (
 )
 
 func main() {
-    var isMainChannel bool
-    flag.BoolVar(&isMainChannel, "listen", false, listen)
+    var isChannel bool
+    flag.BoolVar(&isChannel, "listen", false, listen)
     flag.Parse()
 
-    if isMainChannel {
+    if isChannel {
         ip := os.Args[2]
         connector.Channel(ip, port)
     } else {

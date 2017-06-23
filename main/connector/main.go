@@ -36,7 +36,7 @@ func Channel(ip string, port string) {
     fmt.Println("Message send: ", message)
 }
 
-// Channel takes an ip and port
+// Subscriber takes an ip and port
 // runs subscriber connection to an existing channel
 func Subscriber(ip string, port string) {
     fmt.Println("subscriber on: " + ip + ":" + port)
